@@ -18,24 +18,54 @@ public class Distancias {
     static int totalCidades = 0;
 
     //definindo os filtros
-    static char tipoFiltro = 'C';
-    static String filtroTexto = "Europa";
+    static char tipoFiltro = 'N';
+    static String filtroTexto = "";
     static int filtroNumero = 0;
 
     public static void main (String[] args) {
+        if (args.length == 0) {
+            tipoFiltro = 'N';
+        }
+        else if (args.length == 2) {
+            tipoFiltro = args[0].charAt(0);
 
+            if (tipoFiltro == '+' || tipoFiltro == '-') {
+                filtroNumero = Integer.parseInt(args[1]);
+            } else {
+                filtroTexto = args[1];
+            }
+        }
         //metodo para leitura
         carregarDados();
 
-        System.out.println("Total de cidades carregadas: "+ totalCidades);
-
-        if (totalCidades>0) {
-            System.out.println("Primeira: "+ cidades[0]);
-            System.out.println("Última: "+ cidades[totalCidades-1]);
+        if (totalCidades < 2) {
+            System.out.println("Não existem cidades suficientes.");
+        }
+        else {
+            double maiorDistância = 0.0;
+            String cidadeA = "";
+            String cidadeB = "";
             
+            //loop duplo, compara todas as cidades contra todas
+            for(int i = 0; i < totalCidades; i++) {
+                for(int j = i + 1; j < totalCidades; j++) {
+
+                    double dist = calcularDistancia(
+                        latitudes[i], longitudes[i],
+                        latitudes[j], longitudes[j]
+                    );
+
+                    if (dist > maiorDistância) {
+                        maiorDistância = dist;
+                        cidadeA = cidades[i];
+                        cidadeB = cidades[j];
+                    }
+                }
+            }
+            System.out.printf("As cidades mais distantes são: %s e %s, com distância de %.2f km\n",
+                                cidadeA, cidadeB, maiorDistância);
         }
     }
-
     //Declaração do método para a leitura do arquivo
     public static void carregarDados() {
         Scanner sc = new Scanner(System.in);
@@ -87,9 +117,32 @@ public class Distancias {
                     totalCidades++;
 
                 }
-
             }
         }
         sc.close();
     }
+
+    public static double calcularDistancia (double lat1, double lon1, double lat2, double lon2) {
+
+            //raio da terra
+            final double R = 6378.13;
+
+            //conversões para radianos
+            double lat1Rad = Math.toRadians(lat1);
+            double lat2Rad = Math.toRadians(lat2);
+            double lon1Rad = Math.toRadians(lon1);
+            double lon2Rad = Math.toRadians(lon2);
+
+            double deltaLat = (lat2Rad - lat1Rad);
+            double deltaLon = (lon2Rad - lon1Rad);
+
+            //Fórmula de Haversine
+            double a = Math.pow(Math.sin(deltaLat / 2), 2) +
+                       Math.cos(lat1Rad)*Math.cos(lat2Rad) *
+                       Math.pow(Math.sin(deltaLon / 2), 2);
+
+            double c = 2 * Math.asin(Math.sqrt(a));
+
+            return (R * c);
+    }   
 }
