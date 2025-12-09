@@ -17,6 +17,11 @@ public class Distancias {
     //Variavel para contar quantas cidades realmente guardamos
     static int totalCidades = 0;
 
+    //definindo os filtros
+    static char tipoFiltro = 'C';
+    static String filtroTexto = "Europa";
+    static int filtroNumero = 0;
+
     public static void main (String[] args) {
 
         //metodo para leitura
@@ -42,20 +47,45 @@ public class Distancias {
             String[] pedacos = linha.split(";");
 
             if (pedacos.length == 6) {
-                continentes[totalCidades] = pedacos[0];
-                paises[totalCidades] = pedacos[1];
-                cidades[totalCidades] = pedacos[2];
+                String cont = pedacos[0];
+                String pais = pedacos[1];
+                String cid = pedacos[2];
             
-                try {
-                    //converte os textos para números
-                    latitudes[totalCidades]  = Double.parseDouble(pedacos[3]);
-                    longitudes[totalCidades]  = Double.parseDouble(pedacos[4]);
-                    populacoes[totalCidades]  = Integer.parseInt(pedacos[5]);
-                    
-                    //se a conversão deu certo, incrementa o contador para a próxima posição
+                //conversões do texto para número
+                double lat = Double.parseDouble(pedacos[3]);
+                double lon = Double.parseDouble(pedacos[4]);
+                int pop = Integer.parseInt(pedacos[5]);
+
+                //lógica do filtro
+                boolean deveSalvar = false;
+
+                if (tipoFiltro == 'N') {
+                    deveSalvar = true;
+                }
+                else if (tipoFiltro == 'C') {
+                    if (cont.equalsIgnoreCase(filtroTexto)) deveSalvar = true;
+                }
+                else if (tipoFiltro=='P') {
+                    if(pais.equalsIgnoreCase(filtroTexto)) deveSalvar = true;
+                }
+                else if (tipoFiltro == '+') {
+                    if (pop>= filtroNumero) deveSalvar = true;
+                }
+                else if (tipoFiltro == '-') {
+                    if (pop <= filtroNumero) deveSalvar = true;
+                }
+
+                // se passou no filtro
+                if (deveSalvar) {
+                    continentes[totalCidades] = cont;
+                    paises[totalCidades] = pais;
+                    cidades[totalCidades] = cid;
+                    latitudes[totalCidades] = lat;
+                    longitudes[totalCidades] = lon;
+                    populacoes[totalCidades] = pop;
+
                     totalCidades++;
-                } catch (NumberFormatException e) {
-                    //se der erro ignora a linha evitando de quebrar o programa
+
                 }
 
             }
