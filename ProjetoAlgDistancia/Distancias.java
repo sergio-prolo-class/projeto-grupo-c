@@ -66,12 +66,14 @@ public class Distancias {
                                 cidadeA, cidadeB, maiorDistância);
         }
     }
-
+    //Declaração do método para a leitura do arquivo
     public static void carregarDados() {
         Scanner sc = new Scanner(System.in);
+
         //enquanto houver linhas e não estourar o vetor
         while (sc.hasNextLine() && totalCidades<MAX) {
             String linha = sc.nextLine();
+
             String[] pedacos = linha.split(";");
 
             if (pedacos.length == 6) {
@@ -113,6 +115,7 @@ public class Distancias {
                     populacoes[totalCidades] = pop;
 
                     totalCidades++;
+
                 }
             }
         }
